@@ -250,7 +250,6 @@ def download_drive_source(url):
             url=url,
             output=output_file,
             quiet=True,
-            fuzzy=True,
         )
 
         if not downloaded:
