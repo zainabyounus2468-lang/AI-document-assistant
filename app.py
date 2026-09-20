@@ -389,17 +389,17 @@ def process_sources(uploaded_files, drive_url):
 # Grok
 # -----------------------------
 def ask_grok(question, retrieved_chunks):
-    api_key = st.secrets.get("XAI_API_KEY")
+    api_key = st.secrets.get("GROQ_API_KEY")
 
     if not api_key:
         raise ValueError(
-            "XAI_API_KEY is missing. Add it to Streamlit secrets."
+            "GROQ_API_KEY is missing. Add it to Streamlit secrets."
         )
 
-    client = OpenAI(
-        api_key=api_key,
-        base_url="https://api.x.ai/v1",
-    )
+   client = OpenAI(
+    api_key=api_key,
+    base_url="https://api.groq.com/openai/v1",
+)
 
     context_parts = []
 
@@ -440,7 +440,7 @@ USER QUESTION:
 """
 
     response = client.responses.create(
-        model="grok-4.6",
+        model="llama-3.3-70b-versatile",
         input=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
