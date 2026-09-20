@@ -396,10 +396,10 @@ def ask_grok(question, retrieved_chunks):
             "GROQ_API_KEY is missing. Add it to Streamlit secrets."
         )
 
-   client = OpenAI(
-    api_key=api_key,
-    base_url="https://api.groq.com/openai/v1",
-)
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://api.groq.com/openai/v1",
+    )
 
     context_parts = []
 
@@ -424,6 +424,7 @@ You are a document question-answering assistant.
 
 Answer the user's question ONLY using the provided document context.
 Do not use outside knowledge.
+
 If the answer is not available in the context, say:
 "I couldn't find that information in the provided documents."
 
@@ -439,15 +440,15 @@ USER QUESTION:
 {question}
 """
 
-    response = client.responses.create(
+    response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
-        input=[
+        messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
     )
 
-    return response.output_text
+    return response.choices[0].message.content
 
 
 # -----------------------------
