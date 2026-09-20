@@ -244,8 +244,10 @@ def download_drive_source(url):
             quiet=True,
             use_cookies=False,
         )
+
     else:
         output_file = os.path.join(temp_dir, "drive_file")
+
         downloaded = gdown.download(
             url=url,
             output=output_file,
@@ -255,8 +257,35 @@ def download_drive_source(url):
         if not downloaded:
             raise ValueError(
                 "Google Drive file could not be downloaded. "
-                "Check that the file is shared and accessible."
+                "Check that the file is shared as "
+                "'Anyone with the link → Viewer'."
             )
+
+        file_path = Path(downloaded)
+
+        # Read downloaded file
+        file_bytes = file_path.read_bytes()
+
+        # Detect PDF
+        if file_bytes.startswith(b"%PDF"):
+            new_path = file_path.with_suffix(".pdf")
+
+        # Detect DOCX
+        elif file_bytes.startswith(b"PK"):
+            new_path = file_path.with_suffix(".docx")
+
+        # Detect TXT / MD
+        else:
+            try:
+                file_bytes.decode("utf-8")
+                new_path = file_path.with_suffix(".txt")
+            except UnicodeDecodeError:
+                raise ValueError(
+                    "Unsupported Google Drive file type. "
+                    "Please use PDF, DOCX, TXT, or MD."
+                )
+
+        file_path.rename(new_path)
 
     return temp_dir
 
